@@ -1,0 +1,19 @@
+services:
+  labo:
+    # Image publiée par la CI (GitHub Actions → GHCR).
+    image: ghcr.io/hug0003/virtualisation:latest
+    # Permet aussi de construire en local : docker compose up --build
+    build: .
+    container_name: labo-virtualisation
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  # Déploiement continu automatique (optionnel) : décommentez pour que Watchtower
+  # récupère toute nouvelle image publiée par la CI et redémarre le conteneur.
+  # watchtower:
+  #   image: containrrr/watchtower
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: --interval 300 labo-virtualisation
+  #   restart: unless-stopped

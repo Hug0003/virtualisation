@@ -1,0 +1,9 @@
+# Images d'installation : bien trop lourdes pour Git (limite GitHub de 100 Mo)
+*.iso
+
+# Documents de cours locaux
+*.pdf
+
+# Système
+.DS_Store
+Thumbs.db
