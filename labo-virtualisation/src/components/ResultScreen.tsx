@@ -1,7 +1,9 @@
 import { THEME_NAME } from '../data/themes'
+import { PASS_RATIO, starsFor } from '../lib/game'
 import { solutionText } from '../lib/session'
 import type { Answered, SessionConfig } from '../types'
 import Rich from './Rich'
+import Stars from './Stars'
 
 interface Props {
   config: SessionConfig
@@ -9,19 +11,23 @@ interface Props {
   total: number
   onExit: () => void
   onRestart: () => void
+  exitLabel?: string
 }
 
-export default function ResultScreen({ config, answered, total, onExit, onRestart }: Props) {
+export default function ResultScreen({ config, answered, total, onExit, onRestart, exitLabel = 'Retour à l’accueil' }: Props) {
   const ok = answered.filter((a) => a.correct).length
   const exam = Boolean(config.exam)
-  const denominator = exam ? total : answered.length
+  const boss = config.mode === 'boss'
+  // Une épreuve se note sur toutes ses questions, comme un examen : arrêter tôt ne protège pas le score.
+  const denominator = exam || boss ? total : answered.length
   const ratio = denominator ? ok / denominator : 0
   const grade = Math.round(ratio * 200) / 10
   const wrong = answered.filter((a) => !a.correct)
   const list = exam ? answered : wrong
 
   let verdict = 'Continuez, la répétition fait tout.'
-  if (ratio >= 0.85) verdict = 'Excellent, vous maîtrisez le sujet.'
+  if (boss) verdict = ratio >= PASS_RATIO ? 'Chapitre validé, bravo !' : `Il faut ${Math.round(PASS_RATIO * 100)} % pour valider. Relisez les explications et retentez.`
+  else if (ratio >= 0.85) verdict = 'Excellent, vous maîtrisez le sujet.'
   else if (ratio >= 0.65) verdict = 'Bien. Revoyez les erreurs pour consolider.'
   else if (ratio >= 0.45) verdict = 'C’est en route. Relisez les explications ci-dessous.'
 
@@ -41,16 +47,17 @@ export default function ResultScreen({ config, answered, total, onExit, onRestar
           </>
         )}
       </h1>
+      {boss && <Stars count={starsFor(ratio)} size="large" />}
       <p className="result-verdict">
         {verdict}
         {exam && answered.length < total && ` ${total - answered.length} question(s) sans réponse comptent comme fausses.`}
       </p>
       <div className="row">
         <button type="button" className="btn btn-primary" onClick={onRestart}>
-          Recommencer
+          {boss ? 'Retenter l’épreuve' : 'Recommencer'}
         </button>
         <button type="button" className="btn btn-ghost" onClick={onExit}>
-          Retour à l'accueil
+          {exitLabel}
         </button>
       </div>
 

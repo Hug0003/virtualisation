@@ -8,6 +8,7 @@ Les questions reprennent les cours « Les fondations » et « La virtualisation 
 
 | Mode | Description |
 |---|---|
+| Cours (parcours gamifié) | 11 chapitres, 33 leçons courtes avec questions rapides, une épreuve par chapitre (3 étoiles), XP, niveaux, série de jours et badges ; chaque chapitre réussi débloque le suivant |
 | Session sur mesure | Choix des thèmes, des types de questions et du nombre (10, 20 ou 40) |
 | Examen blanc | 30 questions en 30 minutes, note sur 20, correction complète à la fin |
 | Terminal | Taper la vraie commande (`qm`, `pct`, `pvecm`, `lvcreate`, `zpool`, `ip`…) |
@@ -31,6 +32,8 @@ npm run lint       # oxlint
 npm run typecheck  # TypeScript
 npm run build      # build de production dans dist/
 ```
+
+Ajouter des leçons : un fichier par chapitre dans `src/data/course/` (écrans de lecture `read(...)` et mini-questions `check(...)`, dont la première option est la bonne).
 
 Ajouter des questions : un fichier par thème dans `src/data/questions/`. Pour un QCM, la **première** option est la bonne réponse (l'ordre est mélangé à l'affichage).
 

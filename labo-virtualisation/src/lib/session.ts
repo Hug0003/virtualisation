@@ -1,6 +1,7 @@
 import { BANK, BANK_BY_ID } from '../data/questions'
 import { THEMES } from '../data/themes'
 import { GENERATOR_BY_ID, GENERATORS } from '../generators'
+import { BOSS_QUESTIONS } from './game'
 import { pick, shuffle, type Rng } from '../generators/random'
 import type { Family, Item, Question, SessionConfig, ThemeId } from '../types'
 
@@ -67,6 +68,11 @@ export function customSession(themes: ThemeId[], families: Family[], count: numb
 export function themeSession(theme: ThemeId): SessionConfig {
   const name = THEMES.find((t) => t.id === theme)?.name ?? theme
   return { mode: 'custom', title: name, items: buildItems([theme], ALL_FAMILIES, 10) }
+}
+
+export function bossSession(theme: ThemeId): SessionConfig {
+  const name = THEMES.find((t) => t.id === theme)?.name ?? theme
+  return { mode: 'boss', title: `Épreuve · ${name}`, items: buildItems([theme], ALL_FAMILIES, BOSS_QUESTIONS), chapter: theme }
 }
 
 export function examSession(): SessionConfig {

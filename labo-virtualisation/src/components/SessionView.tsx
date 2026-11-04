@@ -15,6 +15,9 @@ interface Props {
   onRecord: (theme: ThemeId, key: string, correct: boolean) => void
   onExit: () => void
   onRestart: () => void
+  /** Appelé une seule fois, à la fin de la série. */
+  onFinish?: (answered: Answered[], total: number) => void
+  exitLabel?: string
 }
 
 const KIND_LABEL: Record<Question['kind'], string> = {
@@ -30,7 +33,7 @@ function formatTime(ms: number): string {
   return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }
 
-export default function SessionView({ config, onRecord, onExit, onRestart }: Props) {
+export default function SessionView({ config, onRecord, onExit, onRestart, onFinish, exitLabel }: Props) {
   const [items, setItems] = useState<Item[]>(config.items)
   const [index, setIndex] = useState(0)
   const [question, setQuestion] = useState<Question | null>(() => (config.items[0] ? materialize(config.items[0]) : null))
@@ -40,6 +43,7 @@ export default function SessionView({ config, onRecord, onExit, onRestart }: Pro
   const [deadline] = useState(() => (config.minutes ? Date.now() + config.minutes * 60_000 : null))
   const [now, setNow] = useState(() => Date.now())
   const nextButton = useRef<HTMLButtonElement>(null)
+  const reported = useRef(false)
 
   const exam = Boolean(config.exam)
   const total = config.endless ? null : items.length
@@ -99,8 +103,15 @@ export default function SessionView({ config, onRecord, onExit, onRestart }: Pro
     return () => window.clearInterval(id)
   }, [deadline, finished])
 
+  useEffect(() => {
+    if (finished && !reported.current) {
+      reported.current = true
+      onFinish?.(answered, items.length)
+    }
+  }, [finished, answered, items.length, onFinish])
+
   if (finished || !question) {
-    return <ResultScreen config={config} answered={answered} total={items.length} onExit={onExit} onRestart={onRestart} />
+    return <ResultScreen config={config} answered={answered} total={items.length} onExit={onExit} onRestart={onRestart} exitLabel={exitLabel} />
   }
 
   const okCount = answered.filter((a) => a.correct).length

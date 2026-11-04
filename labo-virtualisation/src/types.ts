@@ -70,7 +70,7 @@ export interface Item {
   id: string
 }
 
-export type SessionMode = 'custom' | 'exam' | 'terminal' | 'calc' | 'order' | 'review'
+export type SessionMode = 'custom' | 'exam' | 'terminal' | 'calc' | 'order' | 'review' | 'boss'
 
 export interface SessionConfig {
   mode: SessionMode
@@ -81,6 +81,8 @@ export interface SessionConfig {
   /** Questions générées sans fin, jusqu'à ce que l'utilisateur arrête. */
   endless?: boolean
   minutes?: number
+  /** Épreuve de fin de chapitre du parcours. */
+  chapter?: ThemeId
 }
 
 export interface Answered {
