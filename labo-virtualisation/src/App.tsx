@@ -14,7 +14,7 @@ import type { Answered, SessionConfig, ThemeId } from './types'
 
 type View =
   | { name: 'home' }
-  | { name: 'flash' }
+  | { name: 'flash'; deck?: ThemeId }
   | { name: 'course' }
   | { name: 'chapter'; index: number }
   | { name: 'lesson'; chapter: number; lesson: number; run: number }
@@ -166,7 +166,7 @@ export default function App() {
           <Home
             progress={progress}
             onStart={(config, rebuild) => setView({ name: 'session', config, rebuild, run: Date.now(), back: { name: 'home' } })}
-            onFlashcards={() => setView({ name: 'flash' })}
+            onFlashcards={(deck) => setView({ name: 'flash', deck })}
             onReset={() => setProgress(emptyProgress())}
           />
         )}
@@ -181,7 +181,7 @@ export default function App() {
             exitLabel={view.back.name === 'chapter' ? 'Retour au chapitre' : 'Retour à l’accueil'}
           />
         )}
-        {view.name === 'flash' && <Flashcards known={progress.known} onMark={markTerm} onExit={() => setView({ name: 'home' })} />}
+        {view.name === 'flash' && <Flashcards key={view.deck ?? 'all'} known={progress.known} initialDeck={view.deck} onMark={markTerm} onExit={() => setView({ name: 'home' })} />}
       </main>
 
       <Toasts toasts={toasts} onDismiss={(id) => setToasts((list) => list.filter((t) => t.id !== id))} />

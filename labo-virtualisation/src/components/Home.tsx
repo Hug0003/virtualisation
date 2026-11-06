@@ -21,7 +21,7 @@ import type { Family, SessionConfig, ThemeId } from '../types'
 interface Props {
   progress: Progress
   onStart: (config: SessionConfig, rebuild: () => SessionConfig) => void
-  onFlashcards: () => void
+  onFlashcards: (deck?: ThemeId) => void
   onReset: () => void
 }
 
@@ -55,13 +55,15 @@ export default function Home({ progress, onStart, onFlashcards, onReset }: Props
 
   const cmdCount = BANK.filter((q) => q.kind === 'cmd').length
   const orderCount = BANK.filter((q) => q.kind === 'order').length
+  const vmwTerms = GLOSSARY.filter((t) => t.theme === 'vmw').length
 
   const modes = [
     { id: 'exam', title: 'Examen blanc', meta: '30 questions · 30 min', desc: 'Tous les thèmes, note sur 20 et correction complète à la fin.', run: () => start(examSession) },
     { id: 'terminal', title: 'Terminal', meta: `${cmdCount} commandes`, desc: 'Tapez la vraie commande : qm, pct, pvecm, lvcreate, zpool, ip…', run: () => start(terminalSession) },
     { id: 'calc', title: 'Calculs réseau et stockage', meta: 'Sans fin', desc: 'Sous-réseaux, masques, RAID, Ceph, quorum, chmod, débits.', run: () => start(calcSession) },
     { id: 'order', title: 'Remettre dans l’ordre', meta: `${orderCount} séquences`, desc: 'Démarrage, LVM, dépannage réseau, cluster, trajet d’un paquet…', run: () => start(orderSession) },
-    { id: 'flash', title: 'Flashcards', meta: `${GLOSSARY.length} termes`, desc: 'Le vocabulaire des deux cours, carte par carte.', run: onFlashcards },
+    { id: 'flash', title: 'Flashcards', meta: `${GLOSSARY.length} termes`, desc: 'Le vocabulaire des deux cours, carte par carte, par thème.', run: () => onFlashcards() },
+    { id: 'flash-vmw', title: 'Flashcards VMware', meta: `${vmwTerms} termes`, desc: 'ESXi, vCenter, vSAN, HA, DRS, vLCM, VCF, memory tiering, PowerCLI…', run: () => onFlashcards('vmw') },
     {
       id: 'review',
       title: 'Revoir mes erreurs',
